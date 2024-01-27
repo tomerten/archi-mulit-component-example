@@ -1,0 +1,79 @@
+@startuml diagram
+skinparam linetype ortho
+
+component Database as database {
+    class FinancialDataMapper
+    class FinancialDatabase
+
+    FinancialDataMapper -right-> FinancialDatabase : uses
+}
+
+component Interactor as interactor {
+    class FinancialEntities
+    interface FinancialDataGateway <<interface>>
+    class FinancialReportGenerator
+    class FinancialReportRequest <<datastructure>>
+    class FinancialReportResponse <<datastructure>>
+    interface FinancialReportRequester <<interface>>
+
+    FinancialDataMapper -up-|> FinancialDataGateway 
+    FinancialDataMapper -up-> FinancialEntities : uses
+    FinancialReportGenerator --> FinancialEntities : uses
+    FinancialReportGenerator -down-> FinancialDataGateway : uses
+    FinancialReportGenerator -left-|> FinancialReportRequester 
+    FinancialReportGenerator -left-> FinancialReportRequest 
+    FinancialReportGenerator -left-> FinancialReportResponse 
+}
+
+database -up->  interactor: uses
+
+component Controller as controller {
+    class FinancialReportController
+    interface FinancialReportPresenter <<interface>>
+
+    FinancialReportController -down-> FinancialReportPresenter : uses
+    FinancialReportController -right-> FinancialReportRequest : uses
+    FinancialReportController -right-> FinancialReportRequester : uses
+    FinancialReportController -right-> FinancialReportResponse : uses
+
+    FinancialReportPresenter -right-> FinancialReportResponse : uses
+}
+
+component Screen_Presenter as screen_presenter {
+    class ScreenPresenter
+    class ScreenViewModel <<datastructure>>
+    interface ScreenView <<interface>>
+
+    ScreenPresenter --> ScreenViewModel : uses
+    ScreenPresenter --> ScreenView : uses
+    ScreenView -up-> ScreenViewModel : uses
+
+    ScreenPresenter -up-|> FinancialReportPresenter : uses
+}
+
+component Print_Presenter as print_presenter {
+    class PrintPresenter
+    class PrintViewModel <<datastructure>>
+    interface PrintView <<interface>>
+
+    PrintPresenter --> PrintViewModel : uses
+    PrintPresenter --> PrintView : uses
+    PrintView -up-> PrintViewModel : uses
+
+    PrintPresenter -up-|> FinancialReportPresenter : uses
+
+}
+
+component Web_View as web_view {
+    class WebView
+}
+
+component PDF_View as pdf_view {
+    class PDFView
+
+}
+
+WebView -up-|> ScreenView
+PDFView -up-|> PrintView
+
+@enduml

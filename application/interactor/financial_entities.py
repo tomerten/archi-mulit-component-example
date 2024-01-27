@@ -1,0 +1,2 @@
+class FinancialEntities:
+    pass

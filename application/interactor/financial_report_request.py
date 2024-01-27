@@ -1,0 +1,2 @@
+class FinancialReportRequest:
+    pass
